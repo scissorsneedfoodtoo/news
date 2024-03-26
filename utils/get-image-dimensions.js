@@ -8,9 +8,12 @@ const getImageDimensions = async (url, title, cache) => {
   try {
     if (cache && imageDimensionMap[url]) return imageDimensionMap[url];
 
-    const res = await probe(url);
-    const width = res?.width ? res?.width : defaultDimensions.width;
-    const height = res?.height ? res?.height : defaultDimensions.height;
+    const isDataURI = url.match(/data:image\/([A-Za-z]+);base64,(.+)$/);
+    const data = isDataURI
+      ? probe.sync(Buffer.from(isDataURI[2], 'base64'))
+      : await probe(url);
+    const width = data?.width ? data?.width : defaultDimensions.width;
+    const height = data?.height ? data?.height : defaultDimensions.height;
 
     if (cache) {
       imageDimensionMap[url] = { width, height };
