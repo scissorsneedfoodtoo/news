@@ -161,7 +161,9 @@
             {% include "partials/site-nav.njk" %}
 
             {# CTA banner #}
-            {% include "partials/banner.njk" %}
+            {% block banner %}
+                {% include "partials/banner.njk" %}
+            {% endblock %}
 
             <div id="error-message"></div>
 

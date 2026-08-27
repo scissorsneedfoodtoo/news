@@ -23,6 +23,11 @@ import {
   toISOStringShortcode
 } from './utils/shortcodes/dates.js';
 import { sitePath } from './utils/site-path.js';
+import {
+  classCentralUrl,
+  classCentralLabel,
+  isGenericClassCentralAd
+} from './utils/class-central.js';
 import { config } from './config/index.js';
 
 const { readFileSync, readdirSync, writeFileSync } = gracefulFS;
@@ -84,6 +89,11 @@ export default function (config) {
   config.addNunjucksShortcode('t', translate);
 
   config.addNunjucksShortcode('fullEscaper', fullEscaper);
+
+  // Demo: resolve a post's primary tag to a Class Central URL / display label
+  config.addFilter('classCentralUrl', classCentralUrl);
+  config.addFilter('classCentralLabel', classCentralLabel);
+  config.addFilter('isGenericClassCentralAd', isGenericClassCentralAd);
 
   config.addNunjucksAsyncShortcode('createJSONLD', createJSONLDShortcode);
 

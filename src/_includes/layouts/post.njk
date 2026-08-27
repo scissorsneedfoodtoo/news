@@ -1,5 +1,6 @@
 {% extends 'layouts/default.njk' %}
 {% from "partials/byline.njk" import byline %}
+{% from "partials/class-central-ad.njk" import classCentralAd, classCentralBanner %}
 
 {% set title = post.title %}
 {% set canonicalUrl = post.path | htmlBaseUrl(site.url) %}
@@ -12,6 +13,15 @@
 reading time if reading time <= 4 mins. Else, add 1 ad for every 1 min of reading
 time #}
 {% set numOfSidebarAds = (((post.reading_time / 2) if post.reading_time <= 4 else (post.reading_time)) + 2) | round(0, 'floor') %}
+
+{# Demo: on tagged posts, swap the CTA banner for a mock partner text banner #}
+{% block banner %}
+    {% if adsEnabled and primaryTag %}
+        {{ classCentralBanner(primaryTag.slug) }}
+    {% else %}
+        {{ super() }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
     <main id="site-main" class="post-template site-main outer">
@@ -60,6 +70,10 @@ time #}
                         </section>
                         {% if adsEnabled %}
                             <div class="sidebar">
+                                {# Demo: mock Class Central sidebar ad, keyed to the post's primary tag #}
+                                {% if primaryTag %}
+                                    {{ classCentralAd(primaryTag.slug, "sidebar") }}
+                                {% endif %}
                                 {% if canonicalUrl | shouldCanonicalHaveGAM %}
                                     {% set localizedAdText %}{% t 'ad-text' %}{% endset %}
                                     <script>var localizedAdText = "{{ localizedAdText | upper }}";</script>
@@ -93,13 +107,20 @@ time #}
                     {% endif %}
                 </section>
                 {% if adsEnabled %}
-                    <div class="banner-ad-bottom">
-                        {% if canonicalUrl | shouldCanonicalHaveGAM %}
-                            {% include "partials/gam-ad-bottom.njk" %}
-                        {% else %}
-                            {% include "partials/ad.njk" %}
-                        {% endif %}
-                    </div>
+                    {% if primaryTag %}
+                        {# Demo: replace the bottom banner ad with a mock Class Central unit, keyed to the post's primary tag #}
+                        <div class="cc-banner-ad-bottom">
+                            {{ classCentralAd(primaryTag.slug, "bottom") }}
+                        </div>
+                    {% else %}
+                        <div class="banner-ad-bottom">
+                            {% if canonicalUrl | shouldCanonicalHaveGAM %}
+                                {% include "partials/gam-ad-bottom.njk" %}
+                            {% else %}
+                                {% include "partials/ad.njk" %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 {% endif %}
             </article>
         </div>

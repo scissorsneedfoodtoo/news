@@ -1,0 +1,70 @@
+{# ---------------------------------------------------------------------------
+   MOCK partner course recommendations — prototype / demo only.
+
+   - classCentralAd(): sidebar / bottom cards that deep-link to the Class Central
+     subject page matching a post's primary tag, e.g. a post tagged "JavaScript"
+     links to https://www.classcentral.com/subject/javascript
+   - classCentralBanner(): fixed text banner that replaces the CTA banner on
+     tagged posts; also deep-links to the matching Class Central subject page.
+
+   Posts whose primary tag isn't in the subject map (utils/class-central.js) get
+   a generic "top courses on Class Central" version instead of a tag-specific one.
+
+   These are static placeholders (no ad server, no tracking), purely for a
+   quick visual demo.
+--------------------------------------------------------------------------- #}
+
+{# Longer partner framing reads fine on the full-width text banner; the compact
+   sidebar / bottom cards keep the shorter label so it doesn't wrap. #}
+{% set classCentralPartnerLabel = "Recommended courses from our partners" %}
+{% set classCentralAdLabel = "Sponsored · Class Central" %}
+
+{% macro classCentralAd(tagSlug, variant) %}
+    {% set label = tagSlug | classCentralLabel %}
+    {% set isGeneric = tagSlug | isGenericClassCentralAd %}
+    <div class="cc-ad cc-ad-{{ variant }}" data-test-label="class-central-ad">
+        <span class="cc-ad-label">{{ classCentralAdLabel }}</span>
+        <a
+            class="cc-ad-body"
+            href="{{ tagSlug | classCentralUrl }}"
+            rel="noopener noreferrer"
+            target="_blank"
+        >
+            {% if isGeneric %}
+                <span class="cc-ad-heading">Explore top courses on Class Central</span>
+                <span class="cc-ad-copy">
+                    Discover the top-rated free online courses, tutorials, and
+                    certifications from universities and providers worldwide.
+                </span>
+                <span class="cc-ad-cta">Browse top courses →</span>
+            {% else %}
+                <span class="cc-ad-heading">Learn {{ label }} online</span>
+                <span class="cc-ad-copy">
+                    Compare {{ label }} courses, tutorials, and certifications from
+                    top universities and providers on Class Central.
+                </span>
+                <span class="cc-ad-cta">Browse {{ label }} courses →</span>
+            {% endif %}
+        </a>
+    </div>
+{% endmacro %}
+
+{# Fixed text banner that takes the place of the CTA banner on tagged posts. #}
+{% macro classCentralBanner(tagSlug) %}
+    {% set label = tagSlug | classCentralLabel %}
+    {% set isGeneric = tagSlug | isGenericClassCentralAd %}
+    <a
+        class="cc-text-banner"
+        data-test-label="class-central-banner"
+        href="{{ tagSlug | classCentralUrl }}"
+        rel="noopener noreferrer"
+        target="_blank"
+    >
+        <span class="cc-text-banner-tag">{{ classCentralPartnerLabel }}</span>
+        {% if isGeneric %}
+            <span>Check out the top free online courses on Class Central →</span>
+        {% else %}
+            <span>Explore <strong>{{ label }}</strong> courses on Class Central →</span>
+        {% endif %}
+    </a>
+{% endmacro %}
